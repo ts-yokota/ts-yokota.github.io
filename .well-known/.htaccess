@@ -1,4 +1,4 @@
-<Files apple-app-site-association>
+<FilesMatch "apple-app-site-association">
     ForceType application/json
-</Files>
+</FilesMatch>
   
