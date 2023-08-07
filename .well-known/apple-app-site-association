@@ -4,7 +4,7 @@
     "details": [
       {
         "appID":"D9PNV75F8D.jp.isetanmitsukoshi.gcp.dev2",
-        "paths":[ "*" ]
+        "paths":[ "/open.html" ]
       }
     ]
   }
