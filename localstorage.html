@@ -13,6 +13,22 @@
         label, input, button {
             margin: 10px 0;
         }
+
+        #storage-list {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        #storage-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #storage-list li {
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -33,6 +49,11 @@
     <h2>Output:</h2>
     <div id="output"></div>
 
+    <h2>LocalStorage Contents:</h2>
+    <div id="storage-list">
+        <ul id="storage-items"></ul>
+    </div>
+
     <script>
         function saveToLocalStorage() {
             const key = document.getElementById('key').value;
@@ -41,6 +62,7 @@
             if (key && value) {
                 localStorage.setItem(key, value);
                 document.getElementById('output').innerText = `Saved: { ${key}: ${value} }`;
+                updateStorageList();
             } else {
                 document.getElementById('output').innerText = 'Please enter both key and value.';
             }
@@ -64,7 +86,24 @@
         function clearLocalStorage() {
             localStorage.clear();
             document.getElementById('output').innerText = 'LocalStorage cleared.';
+            updateStorageList();
         }
+
+        function updateStorageList() {
+            const storageItems = document.getElementById('storage-items');
+            storageItems.innerHTML = '';
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                const listItem = document.createElement('li');
+                listItem.textContent = `${key}: ${value}`;
+                storageItems.appendChild(listItem);
+            }
+        }
+
+        // Initial display of LocalStorage contents
+        updateStorageList();
     </script>
 </body>
 </html>
