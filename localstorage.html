@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LocalStorage and Cookies Example</title>
+    <title>LocalStorage Example</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,25 +15,25 @@
             margin: 10px 0;
         }
 
-        #storage-list, #cookie-list {
+        #storage-list {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
             background-color: #f9f9f9;
         }
 
-        ul {
+        #storage-list ul {
             list-style: none;
             padding: 0;
         }
 
-        li {
+        #storage-list li {
             margin: 5px 0;
         }
     </style>
 </head>
 <body>
-    <h1>LocalStorage and Cookies Example</h1>
+    <h1>LocalStorage Example</h1>
 
     <label for="key">Key:</label>
     <input type="text" id="key" placeholder="Enter key">
@@ -43,17 +43,9 @@
     <input type="text" id="value" placeholder="Enter value">
     <br>
 
-    <label for="expiry">Expiry (seconds):</label>
-    <input type="number" id="expiry" placeholder="Enter expiry in seconds">
-    <br>
-
     <button onclick="saveToLocalStorage()">Save to LocalStorage</button>
     <button onclick="getFromLocalStorage()">Get from LocalStorage</button>
     <button onclick="clearLocalStorage()">Clear LocalStorage</button>
-
-    <button onclick="saveToCookies()">Save to Cookies</button>
-    <button onclick="getFromCookies()">Get from Cookies</button>
-    <button onclick="clearCookies()">Clear Cookies</button>
 
     <h2>Output:</h2>
     <div id="output"></div>
@@ -63,20 +55,14 @@
         <ul id="storage-items"></ul>
     </div>
 
-    <h2>Cookies Contents:</h2>
-    <div id="cookie-list">
-        <ul id="cookie-items"></ul>
-    </div>
-
     <script>
-        // LocalStorage Functions
         function saveToLocalStorage() {
             const key = document.getElementById('key').value;
             const value = document.getElementById('value').value;
             
             if (key && value) {
                 localStorage.setItem(key, value);
-                document.getElementById('output').innerText = `Saved to LocalStorage: { ${key}: ${value} }`;
+                document.getElementById('output').innerText = `Saved: { ${key}: ${value} }`;
                 updateStorageList();
             } else {
                 document.getElementById('output').innerText = 'Please enter both key and value.';
@@ -89,9 +75,9 @@
             if (key) {
                 const value = localStorage.getItem(key);
                 if (value !== null) {
-                    document.getElementById('output').innerText = `Retrieved from LocalStorage: { ${key}: ${value} }`;
+                    document.getElementById('output').innerText = `Retrieved: { ${key}: ${value} }`;
                 } else {
-                    document.getElementById('output').innerText = `No value found in LocalStorage for key: ${key}`;
+                    document.getElementById('output').innerText = `No value found for key: ${key}`;
                 }
             } else {
                 document.getElementById('output').innerText = 'Please enter a key.';
@@ -117,73 +103,8 @@
             }
         }
 
-        // Cookie Functions
-        function saveToCookies() {
-            const key = document.getElementById('key').value;
-            const value = document.getElementById('value').value;
-            const expiry = document.getElementById('expiry').value;
-
-            if (key && value) {
-                let cookieString = `${key}=${value}; path=/`;
-                if (expiry) {
-                    const date = new Date();
-                    date.setTime(date.getTime() + (expiry * 1000));
-                    cookieString += `; expires=${date.toUTCString()}`;
-                }
-                document.cookie = cookieString;
-                document.getElementById('output').innerText = `Saved to Cookies: { ${key}: ${value} }`;
-                updateCookieList();
-            } else {
-                document.getElementById('output').innerText = 'Please enter both key and value.';
-            }
-        }
-
-        function getFromCookies() {
-            const key = document.getElementById('key').value;
-
-            if (key) {
-                const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
-                    const [cookieKey, cookieValue] = cookie.split('=');
-                    acc[cookieKey] = cookieValue;
-                    return acc;
-                }, {});
-
-                if (cookies[key]) {
-                    document.getElementById('output').innerText = `Retrieved from Cookies: { ${key}: ${cookies[key]} }`;
-                } else {
-                    document.getElementById('output').innerText = `No value found in Cookies for key: ${key}`;
-                }
-            } else {
-                document.getElementById('output').innerText = 'Please enter a key.';
-            }
-        }
-
-        function clearCookies() {
-            const cookies = document.cookie.split('; ');
-            cookies.forEach(cookie => {
-                const key = cookie.split('=')[0];
-                document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
-            });
-            document.getElementById('output').innerText = 'Cookies cleared.';
-            updateCookieList();
-        }
-
-        function updateCookieList() {
-            const cookieItems = document.getElementById('cookie-items');
-            cookieItems.innerHTML = '';
-
-            const cookies = document.cookie.split('; ');
-            cookies.forEach(cookie => {
-                const [key, value] = cookie.split('=');
-                const listItem = document.createElement('li');
-                listItem.textContent = `${key}: ${value}`;
-                cookieItems.appendChild(listItem);
-            });
-        }
-
-        // Initial display of LocalStorage and Cookies contents
+        // Initial display of LocalStorage contents
         updateStorageList();
-        updateCookieList();
     </script>
 </body>
 </html>
