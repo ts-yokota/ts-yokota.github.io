@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage and Cookies Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        label, input, button {
+            margin: 10px 0;
+        }
+
+        #storage-list, #cookie-list {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>LocalStorage and Cookies Example</h1>
+
+    <section>
+        <h2>Manage LocalStorage</h2>
+        <label for="local-key">Key:</label>
+        <input type="text" id="local-key" placeholder="Enter key">
+        <br>
+
+        <label for="local-value">Value:</label>
+        <input type="text" id="local-value" placeholder="Enter value">
+        <br>
+
+        <button onclick="saveToLocalStorage()">Save to LocalStorage</button>
+        <button onclick="getFromLocalStorage()">Get from LocalStorage</button>
+        <button onclick="clearLocalStorage()">Clear LocalStorage</button>
+
+        <h3>LocalStorage Contents:</h3>
+        <div id="storage-list">
+            <ul id="storage-items"></ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>Manage Cookies</h2>
+        <label for="cookie-key">Key:</label>
+        <input type="text" id="cookie-key" placeholder="Enter key">
+        <br>
+
+        <label for="cookie-value">Value:</label>
+        <input type="text" id="cookie-value" placeholder="Enter value">
+        <br>
+
+        <label for="cookie-expiry">Expiry (seconds):</label>
+        <input type="number" id="cookie-expiry" placeholder="Enter expiry in seconds">
+        <br>
+
+        <button onclick="saveToCookies()">Save to Cookies</button>
+        <button onclick="getFromCookies()">Get from Cookies</button>
+        <button onclick="clearCookies()">Clear Cookies</button>
+
+        <h3>Cookies Contents:</h3>
+        <div id="cookie-list">
+            <ul id="cookie-items"></ul>
+        </div>
+    </section>
+
+    <h2>Output:</h2>
+    <div id="output"></div>
+
+    <script>
+        // LocalStorage Functions
+        function saveToLocalStorage() {
+            const key = document.getElementById('local-key').value;
+            const value = document.getElementById('local-value').value;
+            
+            if (key && value) {
+                localStorage.setItem(key, value);
+                document.getElementById('output').innerText = `Saved to LocalStorage: { ${key}: ${value} }`;
+                updateStorageList();
+            } else {
+                document.getElementById('output').innerText = 'Please enter both key and value.';
+            }
+        }
+
+        function getFromLocalStorage() {
+            const key = document.getElementById('local-key').value;
+
+            if (key) {
+                const value = localStorage.getItem(key);
+                if (value !== null) {
+                    document.getElementById('output').innerText = `Retrieved from LocalStorage: { ${key}: ${value} }`;
+                } else {
+                    document.getElementById('output').innerText = `No value found in LocalStorage for key: ${key}`;
+                }
+            } else {
+                document.getElementById('output').innerText = 'Please enter a key.';
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            document.getElementById('output').innerText = 'LocalStorage cleared.';
+            updateStorageList();
+        }
+
+        function updateStorageList() {
+            const storageItems = document.getElementById('storage-items');
+            storageItems.innerHTML = '';
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                const listItem = document.createElement('li');
+                listItem.textContent = `${key}: ${value}`;
+                storageItems.appendChild(listItem);
+            }
+        }
+
+        // Cookie Functions
+        function saveToCookies() {
+            const key = document.getElementById('cookie-key').value;
+            const value = document.getElementById('cookie-value').value;
+            const expiry = document.getElementById('cookie-expiry').value;
+
+            if (key && value) {
+                let cookieString = `${key}=${value}; path=/`;
+                if (expiry) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (expiry * 1000));
+                    cookieString += `; expires=${date.toUTCString()}`;
+                }
+                document.cookie = cookieString;
+                document.getElementById('output').innerText = `Saved to Cookies: { ${key}: ${value} }`;
+                updateCookieList();
+            } else {
+                document.getElementById('output').innerText = 'Please enter both key and value.';
+            }
+        }
+
+        function getFromCookies() {
+            const key = document.getElementById('cookie-key').value;
+
+            if (key) {
+                const cookies = document.cookie.split('; ').reduce((acc, cookie) => {
+                    const [cookieKey, cookieValue] = cookie.split('=');
+                    acc[cookieKey] = cookieValue;
+                    return acc;
+                }, {});
+
+                if (cookies[key]) {
+                    document.getElementById('output').innerText = `Retrieved from Cookies: { ${key}: ${cookies[key]} }`;
+                } else {
+                    document.getElementById('output').innerText = `No value found in Cookies for key: ${key}`;
+                }
+            } else {
+                document.getElementById('output').innerText = 'Please enter a key.';
+            }
+        }
+
+        function clearCookies() {
+            const cookies = document.cookie.split('; ');
+            cookies.forEach(cookie => {
+                const key = cookie.split('=')[0];
+                document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
+            });
+            document.getElementById('output').innerText = 'Cookies cleared.';
+            updateCookieList();
+        }
+
+        function updateCookieList() {
+            const cookieItems = document.getElementById('cookie-items');
+            cookieItems.innerHTML = '';
+
+            const cookies = document.cookie.split('; ');
+            cookies.forEach(cookie => {
+                const [key, value] = cookie.split('=');
+                const listItem = document.createElement('li');
+                listItem.textContent = `${key}: ${value}`;
+                cookieItems.appendChild(listItem);
+            });
+        }
+
+        // Initial display of LocalStorage and Cookies contents
+        updateStorageList();
+        updateCookieList();
+    </script>
+</body>
+</html>
